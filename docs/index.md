@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "TTB AI Agent Day"
   text: "สร้าง AI Agent ที่พร้อมทดสอบ"
-  tagline: "ลงมือสร้าง ttb Service Request Assistant ด้วย Microsoft Copilot Studio ตั้งแต่กำหนดขอบเขต เพิ่ม Knowledge เชื่อม Agent Flow ไปจนถึงทดสอบและ Publish อย่างรับผิดชอบ"
+  tagline: "ในการฝึกอบรมนี้ พลจะพาพวกเราสร้าง ใน Microsoft Copilot Studio ตั้งแต่กำหนดโจทย์ เพิ่ม Knowledge สร้าง Agent Flow ไปจนถึงทดสอบและเผยแพร่ Agent กันครับ"
   actions:
     - theme: brand
       text: เริ่มแบบฝึกหัดที่ 1
@@ -56,7 +56,7 @@ features:
 </div>
 
 ::: warning ข้อมูลสำหรับการอบรม
-ชื่อบุคคล เหตุการณ์ ขั้นตอน และข้อมูลบริการทั้งหมดเป็นข้อมูลสมมติ ไม่ใช่นโยบาย กระบวนการ หรือ SLA จริงของ ttb ห้ามใช้ข้อมูลลูกค้า ข้อมูลส่วนบุคคล หรือข้อมูลภายในจริงในการฝึก
+ชื่อบุคคล เหตุการณ์ ขั้นตอน และข้อมูลบริการทั้งหมดในชุดนี้เป็นข้อมูลสมมติ ไม่ใช่นโยบาย กระบวนการ หรือ SLA จริงของ ttb ห้ามใช้ข้อมูลลูกค้า ข้อมูลส่วนบุคคล หรือข้อมูลภายในจริงในการอบรม
 :::
 
 ## ก่อนเริ่ม
@@ -73,7 +73,7 @@ features:
 <div class="download-row">
   <a href="./downloads/ttb-ai-agent-day-sample-files.zip">⬇ ดาวน์โหลดไฟล์ทั้งหมด</a>
   <a href="./files/ttb-service-request-guide.docx">📄 คู่มือคำขอบริการจำลอง</a>
-  <a href="./resources/service-request-test-cases">🧪 ชุดกรณีทดสอบ</a>
+  <a href="./resources/service-request-test-cases">🧪 ชุดทดสอบ</a>
   <a href="./resources/agent-readiness-checklist">✅ Readiness Checklist</a>
 </div>
 

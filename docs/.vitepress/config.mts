@@ -29,7 +29,7 @@ export default withMermaid(
           items: [
             { text: 'ดาวน์โหลดทั้งหมด', link: '/downloads/ttb-ai-agent-day-sample-files.zip' },
             { text: 'คู่มือจำลอง', link: '/files/ttb-service-request-guide.docx' },
-            { text: 'กรณีทดสอบ', link: '/resources/service-request-test-cases' },
+            { text: 'ชุดทดสอบ', link: '/resources/service-request-test-cases' },
             { text: 'Readiness Checklist', link: '/resources/agent-readiness-checklist' }
           ]
         }
@@ -52,7 +52,7 @@ export default withMermaid(
         {
           text: 'ทรัพยากร',
           items: [
-            { text: 'ชุดกรณีทดสอบ', link: '/resources/service-request-test-cases' },
+            { text: 'ชุดทดสอบ', link: '/resources/service-request-test-cases' },
             { text: 'Agent Readiness Checklist', link: '/resources/agent-readiness-checklist' }
           ]
         }
