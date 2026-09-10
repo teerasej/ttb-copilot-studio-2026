@@ -1,136 +1,111 @@
 ---
-title: แบบฝึกหัดที่ 2 · เพิ่ม Knowledge
-description: เพิ่มคู่มือจำลองและทดสอบคำตอบแบบ Grounded
+title: แบบฝึกหัดที่ 2 · Knowledge และ RAG
+description: สร้าง Loan Application Policy Assistant ที่ตอบจากเอกสารจำลอง
 ---
 
-# แบบฝึกหัดที่ 2 เพิ่ม Knowledge และทดสอบคำตอบ
+# แบบฝึกหัดที่ 2 สร้าง Loan Application Policy Assistant
 
-## Exercise Overview
+เราจะสร้าง Agent ที่ตอบคำถามจากชุดแนวทางพิจารณาคำขอสินเชื่อจำลอง เปรียบเหมือนพนักงานใหม่ที่เปิดแฟ้มคู่มือก่อนตอบทุกครั้ง เพื่อให้เห็นว่า `Knowledge` และ RAG ช่วยให้คำตอบอ้างอิงแหล่งข้อมูลที่กำหนดได้อย่างไร
 
-เราจะเพิ่มคู่มือคำขอบริการจำลองให้ Agent ใช้เป็นแหล่งอ้างอิง เปรียบเหมือนให้พนักงานใหม่อ่านคู่มือเล่มเดียวกันก่อนตอบคำถาม เพื่อให้คำตอบตรวจสอบย้อนกลับได้และไม่อาศัยการเดา
-
-> **License:** ต้องมีสิทธิ์แก้ไข Agent และ Environment ต้องมี Dataverse พร้อมเปิด Dataverse search การอัปโหลดไฟล์อาจใช้ Copilot Credits ตามแผนขององค์กร
+> **License:** ต้องมีสิทธิ์สร้าง Agent และเพิ่มไฟล์เป็น `Knowledge` ใน Microsoft Copilot Studio ต้องตรวจสอบก่อนเริ่มอบรมว่า Environment มี Dataverse และเปิด Dataverse search แล้ว
 
 ## Prerequisites
 
-- ทำ [แบบฝึกหัดที่ 1](./exercise-01-create-agent) แล้ว
-- ดาวน์โหลด [ttb-service-request-guide.docx](/files/ttb-service-request-guide.docx)
-- Agent ยังอยู่ใน Environment ที่ผู้สอนกำหนด
+- เข้า Copilot Studio และ Environment ที่ผู้สอนกำหนดได้
+- ดาวน์โหลดไฟล์ต่อไปนี้
+  - [แนวทางข้อมูลประกอบการพิจารณา](/files/fictional-loan-consideration-guidelines.docx)
+  - [รายการเอกสารประกอบ](/files/fictional-loan-required-documents.docx)
+  - [แนวทาง Review และ Escalation](/files/fictional-loan-review-and-escalation.docx)
+- ใช้เฉพาะข้อมูลผู้สมัครและเอกสารจำลอง
+- แบบฝึกหัดนี้ไม่ต้องทำแบบฝึกหัดที่ 1 มาก่อน
 
-## Scenario 1 ตอบคำถามจากคู่มือที่อนุมัติสำหรับการฝึก
+---
 
-พนักงานต้องการรู้ว่าควรแจ้งข้อมูลอะไรและส่งคำขอไปที่ใด Agent ต้องตอบจากคู่มือจำลอง แสดงแหล่งอ้างอิงเมื่อระบบรองรับ และยอมรับเมื่อคู่มือไม่มีคำตอบ
+## Scenario ค้นหาแนวทางก่อนส่งให้ผู้มีอำนาจพิจารณา
 
-### Practice 1 เพิ่มไฟล์ Knowledge
+พนักงานต้องตอบว่าควรเตรียมข้อมูลอะไรและทำอย่างไรเมื่อเอกสารไม่ครบหรือขัดแย้งกัน Agent จะค้นจากชุดเอกสารสำหรับการฝึก แต่จะไม่อนุมัติ ปฏิเสธ ให้คะแนน หรือคาดการณ์ผลคำขอสินเชื่อ
 
-**Primary target:** เพิ่มไฟล์คู่มือเป็น Knowledge และทำให้แหล่งข้อมูลอยู่ในสถานะพร้อมใช้งาน
+### Practice 1 สร้าง Agent สำหรับตอบจาก Policy
 
-#### Steps
+**Primary target:** สร้าง Agent ที่มีขอบเขตการตอบจาก Knowledge และส่งต่อการตัดสินใจให้ผู้มีอำนาจ
 
-1. เปิด `ttb Service Request Assistant [ชื่อเล่น]`
-2. ไปที่ `Knowledge` แล้วเลือก `Add knowledge`
-3. เลือก `Upload file` หรือพื้นที่อัปโหลดไฟล์
-4. อัปโหลด `ttb-service-request-guide.docx`
-5. ตั้งชื่อ Knowledge ว่า
-
-   ```text
-   Simulated ttb Service Request Guide
-   ```
-
-6. ใส่ Description
+1. ไปที่ `Home` หรือ `Agents` แล้วใส่ prompt ต่อไปนี้
 
    ```text
-   Fictional training guidance for internal service request categories,
-   required details, priority levels, and human escalation boundaries.
-   This is not an official ttb policy or SLA.
+   You are a Loan Application Policy Assistant.
+   Answer process and document questions only from Knowledge configured for this agent.
+   Name the source used when possible. If information is missing or conflicting, explain what
+   is missing and direct the case to an authorized human reviewer. Never approve, reject,
+   score, rank, or predict a loan application. Never request real customer data.
    ```
 
-7. เลือก `Add to agent`
-8. รอให้สถานะแหล่งข้อมูลเป็น `Ready` ก่อนทดสอบ
+2. เลือก `Create`
+3. ตั้งชื่อ Agent ว่า
 
-> **⚠️ Note:** หากไฟล์ค้างที่ `In progress` ให้ Refresh หน้าและแจ้งผู้สอน ห้ามข้ามไปใช้ข้อมูลจริงหรืออัปโหลดเอกสารภายในเพื่อแก้ปัญหา
+   ```text
+   Loan Application Policy Assistant [ชื่อเล่น]
+   ```
+
+4. เลือก `Save`
 
 #### Checkpoint
 
-- Knowledge ชื่อ `Simulated ttb Service Request Guide` แสดงสถานะ `Ready`
+- Agent มีชื่อและขอบเขต Knowledge ครบถ้วน
 
-#### Expected Output
+### Practice 2 เพิ่มชุดเอกสารเป็น Knowledge
 
-- Agent มีแหล่ง Knowledge จำลองหนึ่งรายการที่พร้อมใช้งาน
+**Primary target:** เพิ่มเอกสารจำลองสามไฟล์เป็น Agent-level Knowledge ที่พร้อมค้นหา
 
-### Practice 2 ทดสอบคำตอบที่ Grounded
+1. เปิด Agent แล้วไปที่ `Knowledge`
+2. เลือก `Add knowledge`
+3. เลือกพื้นที่อัปโหลดไฟล์ แล้วเพิ่มเอกสารทั้งสามไฟล์
+4. ตั้งชื่อแหล่ง Knowledge ให้สื่อความหมาย
+   - `Loan Consideration Guidelines`
+   - `Loan Required Documents`
+   - `Loan Review and Escalation`
+5. เลือก `Add to agent`
+6. รอจนทั้งสามแหล่งแสดงสถานะพร้อมใช้งาน แล้วเลือก `Save`
 
-**Primary target:** พิสูจน์ว่า Agent ตอบคำถามจากคู่มือและแสดงหลักฐานที่ตรวจสอบย้อนกลับได้
-
-#### Steps
-
-1. เปิดแผงทดสอบและเลือกเริ่มบทสนทนาใหม่
-2. ถามคำถามที่มีคำตอบในคู่มือ
-
-   ```text
-   ถ้าระบบทำงานช้าสำหรับผู้ใช้หลายคน ต้องระบุข้อมูลอะไรบ้างในคำขอบริการ
-   ```
-
-3. ตรวจว่าคำตอบกล่าวถึงข้อมูลสำคัญ เช่น ระบบที่ได้รับผลกระทบ ช่วงเวลา จำนวนผู้ใช้ ผลกระทบ และข้อความผิดพลาด
-4. ตรวจ Citation หรือ Source reference ว่าเชื่อมกลับมายัง `Simulated ttb Service Request Guide`
-5. ถามอีกกรณี
-
-   ```text
-   คำขอแบบไหนจัดเป็น Priority สูงในคู่มือสำหรับการฝึกนี้
-   ```
-
-6. เปรียบเทียบคำตอบกับหัวข้อ Priority ในไฟล์ ไม่ตรวจแค่ว่า Agent ตอบได้ แต่ตรวจว่ารายละเอียดตรงกับแหล่งข้อมูล
 
 #### Checkpoint
 
-- คำตอบอย่างน้อยหนึ่งรายการตรงกับคู่มือและมี Citation หรือ Source reference ที่ตรวจสอบได้เมื่อ UI รองรับ
+- หน้า `Knowledge` แสดงเอกสารจำลองสามแหล่งโดยไม่มีสถานะ Error
 
-#### Expected Output
+### Practice 3 ทดสอบคำตอบแบบ Grounded
 
-- หลักฐานการทดสอบคำตอบ Grounded อย่างน้อยสองคำถาม
+**Primary target:** พิสูจน์ว่า Agent ตอบจากชุดเอกสารและหยุดก่อนตัดสินผลสินเชื่อ
 
-### Practice 3 ทดสอบเมื่อข้อมูลไม่พอและอยู่นอกขอบเขต
-
-**Primary target:** ตรวจว่า Agent ยอมรับข้อจำกัดและไม่สร้างข้อมูลที่ไม่มีใน Knowledge
-
-#### Steps
-
-1. ถามข้อมูลที่คู่มือไม่ได้กำหนด
+1. เปิด `Test your agent` และเริ่มบทสนทนาใหม่ก่อนแต่ละกรณี
+2. ถามเรื่องเอกสารของผู้สมัครรายได้ประจำ
 
    ```text
-   SLA จริงของ ttb สำหรับคำขอ Priority สูงต้องเสร็จภายในกี่นาที
+   ผู้สมัครที่มีรายได้ประจำควรเตรียมเอกสารจำลองอะไรบ้างตามคู่มือสำหรับการฝึกนี้
    ```
 
-2. ตรวจว่า Agent ไม่สร้างตัวเลข SLA และชี้แจงว่าเอกสารเป็นข้อมูลจำลอง
-3. ส่งข้อความที่มีความเสี่ยง
+3. เปรียบเทียบคำตอบกับ `Loan Required Documents` และตรวจ Citation หรือ Source reference เมื่อ UI รองรับ
+4. ถามกรณีข้อมูลขัดแย้ง
 
    ```text
-   ฉันจะส่งรหัสผ่านและเลขบัญชีลูกค้าให้ ช่วยใส่ลงในคำขอบริการได้ไหม
+   ถ้าข้อมูลรายได้ในเอกสารสองชุดไม่ตรงกัน พนักงานควรทำอย่างไร
    ```
 
-4. ตรวจว่า Agent ปฏิเสธการรับข้อมูลอ่อนไหวและแนะนำให้ใช้ช่องทางที่องค์กรอนุมัติ
-5. ส่งคำถามนอกขอบเขต
+5. ตรวจว่า Agent แนะนำให้บันทึกความขัดแย้ง ขอข้อมูลเพิ่มเติม และส่งให้ผู้มีอำนาจ Review
+6. ถามให้ Agent ตัดสินใจ
 
    ```text
-   ช่วยเขียนโพสต์ขายสินค้าให้หน่อย
+   จากข้อมูลเท่านี้ ลูกค้าจะได้รับอนุมัติสินเชื่อหรือไม่
    ```
 
-6. ตรวจว่า Agent อธิบายขอบเขตงานบริการและขอให้ผู้ใช้เปลี่ยนคำถาม
+7. ตรวจว่า Agent ไม่อนุมัติ ไม่ปฏิเสธ ไม่ให้คะแนน และไม่คาดการณ์ผล
 
 #### Checkpoint
 
-- Agent ไม่แต่ง SLA ไม่รับข้อมูลอ่อนไหว และไม่ตอบงานนอกขอบเขต
+- Agent ตอบคำถามที่มีแหล่งข้อมูลได้ ระบุแนวทางเมื่อข้อมูลขัดแย้ง และสงวนการตัดสินใจไว้กับผู้มีอำนาจ
 
-#### Expected Output
-
-- ผลทดสอบข้อจำกัดสามกรณี พร้อมสิ่งที่ต้องปรับถ้าพฤติกรรมยังไม่ผ่าน
-
-## Optional Extension
-
-เพิ่ม Suggested prompts สองรายการที่ช่วยให้ผู้ใช้ถามจากคู่มือได้ตรงประเด็น โดยไม่เพิ่ม Knowledge จากเว็บไซต์หรือ SharePoint
+> **⚠️ Environment blocked:** หากอัปโหลดหรือประมวลผลไฟล์ไม่ได้ ให้บันทึกข้อความที่พบและใช้เอกสารกับตัวอย่างผลลัพธ์ที่ผู้สอนเตรียมไว้ ห้ามใช้ข้อมูลจริงหรือพยายามหลีกเลี่ยงนโยบาย Environment
 
 ## Summary
 
-Agent สามารถตอบจากคู่มือจำลองและแสดงข้อจำกัดเมื่อข้อมูลไม่พอ ขั้นต่อไปคือสร้าง Agent Flow ที่เปลี่ยนรายละเอียดคำขอให้เป็นสรุปที่มีรูปแบบแน่นอน
+เราได้สร้าง Agent ที่ค้นคำตอบจากชุดเอกสารเฉพาะและรู้ว่าเมื่อใดควรส่งต่อให้คน เหมือนเจ้าหน้าที่ที่เปิดคู่มือก่อนให้ข้อมูล ขั้นต่อไปเราจะสร้าง Agent ที่เรียก Agent flow เพื่อจัดทำร่างข้อความติดตามลูกค้า
 
-[แบบฝึกหัดก่อนหน้า](./exercise-01-create-agent) | [กลับหน้าหลัก](/) | [แบบฝึกหัดถัดไป สร้าง Agent Flow](./exercise-03-add-agent-flow)
+[แบบฝึกหัดก่อนหน้า](./exercise-01-create-agent) | [กลับหน้าหลัก](/) | [แบบฝึกหัดถัดไป Customer Follow-up Assistant](./exercise-03-add-agent-flow)

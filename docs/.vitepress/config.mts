@@ -28,7 +28,9 @@ export default withMermaid(
           text: 'ไฟล์ประกอบ',
           items: [
             { text: 'ดาวน์โหลดทั้งหมด', link: '/downloads/ttb-ai-agent-day-sample-files.zip' },
-            { text: 'คู่มือจำลอง', link: '/files/ttb-service-request-guide.docx' },
+            { text: 'ข้อเสนอ Vendor A', link: '/files/fictional-vendor-a-scanner-proposal.pdf' },
+            { text: 'ข้อเสนอ Vendor B', link: '/files/fictional-vendor-b-scanner-proposal.pdf' },
+            { text: 'ข้อเสนอ Vendor C', link: '/files/fictional-vendor-c-scanner-proposal.pdf' },
             { text: 'ชุดทดสอบ', link: '/resources/service-request-test-cases' },
             { text: 'Readiness Checklist', link: '/resources/agent-readiness-checklist' }
           ]
@@ -43,9 +45,9 @@ export default withMermaid(
           text: 'เส้นทางแบบฝึกหัด',
           collapsed: false,
           items: [
-            { text: '1 · สร้าง Agent ตัวแรก', link: '/exercises/exercise-01-create-agent' },
-            { text: '2 · เพิ่ม Knowledge', link: '/exercises/exercise-02-add-knowledge' },
-            { text: '3 · สร้าง Agent Flow', link: '/exercises/exercise-03-add-agent-flow' },
+            { text: '1 · เปรียบเทียบ Vendor', link: '/exercises/exercise-01-create-agent' },
+            { text: '2 · Knowledge และ RAG', link: '/exercises/exercise-02-add-knowledge' },
+            { text: '3 · Customer Follow-up Flow', link: '/exercises/exercise-03-add-agent-flow' },
             { text: '4 · ทดสอบและ Publish', link: '/exercises/exercise-04-publish-and-review' }
           ]
         },

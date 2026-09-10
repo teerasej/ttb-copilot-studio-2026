@@ -1,41 +1,50 @@
 ---
 title: Agent Readiness Checklist
-description: รายการตรวจ Scope, Knowledge, Tool, Security และความพร้อมก่อน Publish
+description: รายการตรวจความพร้อมและขอบเขตก่อน Publish Agent
 ---
 
 # Agent Readiness Checklist
 
-ใช้รายการนี้ก่อน Publish `ttb Service Request Assistant [ชื่อเล่น]`
+เลือกรายการของ Agent ที่ต้องการ Review แล้วใช้เฉพาะข้อมูลจำลอง บันทึกข้อจำกัดของ Environment ตามจริง
 
-## Scope
+## Common Safety
 
 - [ ] Name และ Description บอกชัดว่าเป็นสถานการณ์สำหรับการฝึก
-- [ ] Agent ไม่อนุมัติคำขอ เปลี่ยนสิทธิ์ หรือรับรองเวลาแก้ไข
-- [ ] คำถามนอกขอบเขตได้รับการชี้แจงอย่างเหมาะสม
+- [ ] ไม่มีข้อมูลลูกค้า ข้อมูลส่วนบุคคล รหัสผ่าน access token หรือเลขบัญชีจริง
+- [ ] Agent ไม่อ้างว่าข้อมูลจำลองเป็นนโยบายหรือกระบวนการจริง
+- [ ] Agent แจ้งข้อจำกัดและส่งต่อให้มนุษย์เมื่อเกินขอบเขต
+- [ ] ทดสอบทั้งกรณีปกติและกรณีเสี่ยงแล้ว
 
-## Knowledge
+## Vendor Comparison Assistant
 
-- [ ] `Simulated ttb Service Request Guide` อยู่ในสถานะ `Ready`
-- [ ] คำตอบตรงกับไฟล์และมี Source reference เมื่อระบบรองรับ
-- [ ] Agent ไม่สร้าง SLA หรือนโยบายที่ไม่มีในไฟล์
+- [ ] เปรียบเทียบราคา การชำระเงิน การส่งมอบ การรับประกัน และบริการจากข้อมูลที่ให้เท่านั้น
+- [ ] แยกข้อเท็จจริง ข้อมูลที่ขาด และข้อสังเกตได้
+- [ ] ไม่เลือก อนุมัติ ปฏิเสธ หรือผูกพันกับ vendor
+- [ ] ทดสอบ `VC-01` และ `VC-02` ผ่าน
 
-## Tool
+## Loan Application Policy Assistant
 
-- [ ] `Create Service Request Summary` ถูก Publish และเพิ่มเป็น Tool แล้ว
-- [ ] Tool รับข้อมูลครบสี่รายการและคืน `FormattedSummary`
-- [ ] สรุประบุ `Waiting for human review`
-- [ ] Optional email ใช้ที่อยู่สำหรับฝึกและถามยืนยันก่อนส่ง
+- [ ] Knowledge จำลองทั้งสามแหล่งอยู่ในสถานะพร้อมใช้งาน
+- [ ] คำตอบอ้างอิงเอกสารที่เกี่ยวข้องเมื่อ UI รองรับ
+- [ ] Agent ไม่สร้างเกณฑ์ รายได้ขั้นต่ำ คะแนน หรือผลการอนุมัติ
+- [ ] Agent ส่งข้อมูลที่ขาดหรือขัดแย้งให้ผู้มีอำนาจ Review
+- [ ] ทดสอบ `LP-01` ถึง `LP-04` ผ่าน
 
-## Data and Security
+## Customer Follow-up Assistant
 
-- [ ] ไม่มีข้อมูลลูกค้า รหัสผ่าน token เลขบัญชี หรือข้อมูลส่วนบุคคลจริง
-- [ ] Authentication ตั้งเป็น `Authenticate with Microsoft`
-- [ ] ไม่มีการเลือก `No authentication` เพื่อหลีกเลี่ยงนโยบาย
-- [ ] ไม่มีการแชร์ Agent กว้างกว่าขอบเขตที่ผู้สอนอนุญาต
+- [ ] `Create Customer Follow-up Draft [ชื่อเล่น]` อยู่ในสถานะ Published
+- [ ] Tool รับข้อมูลสามรายการและคืน `FollowUpDraft`
+- [ ] `Asynchronous response` เป็น `Off`
+- [ ] ร่างระบุว่าไม่ยืนยันผลสินเชื่อ
+- [ ] Agent ไม่อ้างว่าส่ง email แล้ว
+- [ ] ทดสอบ `CF-01` ถึง `CF-04` ผ่าน
+- [ ] หากทำ Optional Extension: Outlook Tool สร้างเฉพาะ Draft หลังผู้ใช้ยืนยันและไม่ส่ง email
 
-## Test and Publish
+## Authentication and Publish
 
-- [ ] ทดสอบ `TC-01` ถึง `TC-06` ครบ
-- [ ] แก้ไขและทดสอบซ้ำทุกกรณีที่ไม่ผ่าน
-- [ ] บันทึกข้อจำกัดด้าน license, capacity, connector หรือ tenant policy
-- [ ] ทดสอบเวอร์ชัน Published ในโปรไฟล์ของผู้สร้างเมื่อ Environment รองรับ
+- [ ] ผู้สอนยืนยันว่าจะใช้ Hands-on หรือ Instructor demonstration
+- [ ] Authentication ตั้งตามข้อกำหนดขององค์กร
+- [ ] ไม่มีการเปลี่ยนการตั้งค่าเพื่อหลีกเลี่ยงนโยบาย Environment
+- [ ] Agent ผ่านรายการที่เกี่ยวข้องก่อน Publish
+- [ ] บันทึกข้อจำกัดด้าน license, capacity, Knowledge, Flow หรือ Channel ตามจริง
+- [ ] ทดลองในโปรไฟล์ของผู้สร้างเท่านั้น เว้นแต่ผู้สอนอนุญาตขอบเขตอื่น

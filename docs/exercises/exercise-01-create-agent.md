@@ -1,137 +1,98 @@
 ---
-title: แบบฝึกหัดที่ 1 · สร้าง Agent ตัวแรก
-description: กำหนดขอบเขต Instructions และทดสอบ ttb Service Request Assistant
+title: แบบฝึกหัดที่ 1 · Vendor Comparison Assistant
+description: สร้าง Agent เพื่ออ่านและเปรียบเทียบข้อเสนอ vendor จำลองสามราย
 ---
 
-# แบบฝึกหัดที่ 1 สร้าง ttb Service Request Assistant
+# แบบฝึกหัดที่ 1 สร้าง Vendor Comparison Assistant
 
-## Exercise Overview
+เราจะสร้าง Agent ตัวแรกให้ช่วยเปรียบเทียบข้อเสนอสำหรับเครื่องสแกนเอกสารประจำสาขา เป้าหมายคือเห็นผลลัพธ์ที่ใช้งานได้ทันทีจากการอธิบายงานด้วยภาษาธรรมชาติ โดย Agent ช่วยจัดข้อมูลให้คนพิจารณา
 
-เราจะเริ่มจากงานน่าเบื่อที่ต้องรับคำขอบริการซ้ำ ๆ แล้วเปลี่ยนโจทย์นั้นเป็น Agent ตัวแรกใน Microsoft Copilot Studio เมื่อจบแบบฝึกหัด เราจะมี Agent ที่มีชื่อ ขอบเขต และ Instructions พร้อมสำหรับเพิ่มข้อมูลอ้างอิงในแบบฝึกหัดถัดไป
-
-> **License:** ต้องมีบัญชีที่สร้างและทดสอบ Agent ใน Microsoft Copilot Studio ได้ หากองค์กรปิดการสร้าง Agent ด้วยภาษาธรรมชาติ ให้ใช้ `Create blank agent` ตามขั้นตอนสำรอง
 
 ## Prerequisites
 
 - เข้า [Microsoft Copilot Studio](https://copilotstudio.microsoft.com) ได้
-- เลือก Developer หรือ Trial Environment ที่ผู้สอนกำหนด
-- ใช้เฉพาะข้อมูลสมมติในแบบฝึกหัดนี้
+- ดาวน์โหลดข้อเสนอจำลองทั้งสามไฟล์
+   - [ข้อเสนอ Vendor A](/files/fictional-vendor-a-scanner-proposal.pdf)
+   - [ข้อเสนอ Vendor B](/files/fictional-vendor-b-scanner-proposal.pdf)
+   - [ข้อเสนอ Vendor C](/files/fictional-vendor-c-scanner-proposal.pdf)
+- ใช้เฉพาะข้อมูล vendor จำลองในแบบฝึกหัด
 
-## Scenario 1 งานรับคำขอบริการที่ทำซ้ำทุกวัน
+---
 
-พนักงานต้องอ่านคำขอบริการจากหลายทีม ถามข้อมูลที่ขาด และสรุปเรื่องเพื่อส่งต่อ เราจะสร้าง Agent ช่วยตอบคำถามเบื้องต้นและเตรียมสรุป โดยไม่ตัดสินใจอนุมัติแทนเจ้าหน้าที่
+## Scenario เปรียบเทียบเครื่องสแกนเอกสารสำหรับสาขา
 
-### Practice 1 กำหนดงานน่าเบื่อและขอบเขต
+ทีมงานได้รับไฟล์ข้อเสนอจำลองจาก vendor สามรายสำหรับเครื่องสแกนเอกสาร 12 เครื่อง โดยแต่ละรายส่งข้อเสนอมาเป็นไฟล์ PDF แยกกันและมีราคา ระยะเวลาส่งมอบ การรับประกัน และบริการหลังการขายต่างกัน Agent จะช่วยอ่านข้อมูลจากเอกสาร จัดข้อมูลที่มีอยู่ และชี้สิ่งที่ต้องถามเพิ่มก่อนให้คนตัดสินใจ
 
-**Primary target:** ระบุงานซ้ำหนึ่งงานและกำหนดผลลัพธ์ที่ Agent ควรช่วยสร้างได้อย่างชัดเจน
+### Practice 1 สร้าง Agent ด้วยภาษาธรรมชาติ
 
-#### Steps
-
-1. อ่านสถานการณ์ด้านบน แล้วเขียนงานน่าเบื่อหนึ่งประโยค เช่น `ต้องถามข้อมูลเดิมซ้ำก่อนส่งคำขอบริการให้ทีมที่เกี่ยวข้อง`
-2. กำหนดผู้ใช้หลักเป็น `พนักงานที่ต้องการแจ้งคำขอบริการภายใน`
-3. กำหนดผลลัพธ์เป็น `คำตอบจากคู่มือที่อนุมัติแล้ว หรือสรุปคำขอบริการที่พร้อมให้เจ้าหน้าที่ตรวจ`
-4. กำหนดสิ่งที่ Agent ห้ามทำ ได้แก่ อนุมัติคำขอ เปลี่ยนสิทธิ์ระบบ เปิดเผยข้อมูลส่วนบุคคล หรืออ้างว่าเนื้อหาจำลองเป็นนโยบายจริง
-
-#### Checkpoint
-
-- อธิบายได้ใน 30 วินาทีว่า Agent ช่วยใคร ทำงานอะไร และไม่ทำอะไร
-
-#### Expected Output
-
-- ขอบเขต Agent หนึ่งย่อหน้าที่ใช้ต่อในการสร้าง Agent
-
-### Practice 2 สร้าง Agent ด้วยภาษาธรรมชาติ
-
-**Primary target:** สร้าง Agent ตั้งต้นจากคำอธิบายภาษาธรรมชาติและตั้งชื่อให้แยกจาก Agent ของผู้เรียนคนอื่น
-
-#### Steps
+**Primary target:** สร้าง Agent ที่เข้าใจหน้าที่เปรียบเทียบข้อเสนอและขอบเขตการตัดสินใจของมนุษย์
 
 1. เปิด Copilot Studio และตรวจสอบ Environment ที่มุมบนของหน้าให้ตรงกับที่ผู้สอนกำหนด
-2. ไปที่ `Home` หรือ `Agents` แล้วเลือกช่องสำหรับอธิบาย Agent ที่ต้องการสร้าง
-3. วางข้อความต่อไปนี้
+2. ไปที่ `Home` หรือ `Agents` แล้วมองหาช่อง prompt สำหรับอธิบายหน้าที่ของ Agent ที่ต้องการสร้าง
+3. คัดลอกข้อความต่อไปนี้ไปวางในช่อง prompt และกดส่ง
 
    ```text
-   Create an internal service request assistant for a fictional ttb training scenario.
-   It should answer questions from approved training knowledge, ask for missing request details,
-   and prepare a service request summary for human review. It must not approve requests,
-   expose personal data, or claim that training content is an official ttb policy.
+   You are a Vendor Comparison Assistant for bank procurement.
+   Compare vendor proposal documents supplied in the conversation across total price,
+   payment terms, delivery time, warranty, service coverage, and missing information.
+   Treat details that are not stated in a proposal as missing; never infer or invent them.
+   Separate confirmed facts from missing details and observations for human review.
+   Never select, approve, reject, or commit to a vendor.
    ```
 
-4. ตรวจรายละเอียดที่ระบบเสนอ แล้วเลือก `Create`
-5. ตั้งชื่อ Agent ว่า
+4. รอให้ระบบสร้าง Agent เสร็จ
+5. ตรวจรายละเอียดที่ระบบเสนอ
+6. ถ้าระบบยังไม่ได้ตั้งชื่อ Agent
+   ให้ตั้งชื่อ Agent ว่า `Vendor Comparison Assistant`
 
    ```text
-   ttb Service Request Assistant [ชื่อเล่น]
+   Vendor Comparison Assistant [ชื่อเล่น]
    ```
 
-6. รอจน Agent สร้างเสร็จและเปิดหน้าแก้ไขได้
+7. เลือก `Save`
 
-> **⚠️ Note:** หากไม่เห็นช่องสร้างด้วยภาษาธรรมชาติ ให้เลือก `Create blank agent` ตั้งชื่อเดียวกัน แล้วทำ Practice 3 ต่อได้ทันที ความสามารถนี้อาจถูกปิดโดยนโยบายองค์กรหรือข้อจำกัดของ Cloud
+> **⚠️ Note:** หากไม่เห็นช่องสร้างด้วยภาษาธรรมชาติ ให้เลือก `Create blank agent` ตั้งชื่อ Agent แล้ววาง prompt ด้านบนใน `Instructions`
 
 #### Checkpoint
 
-- เห็น Agent ชื่อ `ttb Service Request Assistant [ชื่อเล่น]` ใน Environment ที่ถูกต้อง
+- หน้า Agent แสดงชื่อของผู้เรียนและ Instructions ระบุชัดว่า Agent เปรียบเทียบได้ แต่ตัดสินใจเลือก vendor ไม่ได้
 
-#### Expected Output
+### Practice 2 เปรียบเทียบข้อเสนอจำลอง
 
-- Agent ตั้งต้นหนึ่งตัวที่ผู้เรียนเป็นเจ้าของ
+**Primary target:** ใช้ Agent เปรียบเทียบข้อเสนอสามรายและชี้ข้อมูลที่ยังขาดสำหรับการพิจารณาของมนุษย์
 
-### Practice 3 ตั้ง Instructions และ Smoke test
-
-**Primary target:** กำหนดพฤติกรรมหลักของ Agent และพิสูจน์ว่า Agent รักษาขอบเขตก่อนเพิ่ม Knowledge
-
-#### Steps
-
-1. เปิดส่วน `Instructions` ของ Agent แล้วเลือก `Edit`
-2. แทนที่หรือปรับ Instructions ให้มีข้อความต่อไปนี้
-
-   ```text
-   You are ttb Service Request Assistant for a fictional training scenario.
-
-   Goals:
-   - Help internal employees understand the simulated service request process.
-   - Ask for missing request type, issue summary, and business impact.
-   - Prepare a concise request summary for human review when the user asks.
-
-   Rules:
-   - Use only approved knowledge added to this agent for process or policy answers.
-   - Never claim that training content is an official ttb policy or SLA.
-   - Never approve a request, change access, or promise completion.
-   - Do not request or repeat passwords, access tokens, customer data, national IDs, account numbers, or other sensitive data.
-   - For unrelated requests, explain the scope and ask the user to rephrase.
-   ```
-
-3. เลือก `Save`
-4. เปิด `Test your agent` หรือแผงทดสอบ แล้วเริ่มบทสนทนาใหม่
-5. ส่งคำถามทดสอบ
+1. ตรวจว่าดาวน์โหลดไฟล์ข้อเสนอจำลองครบทั้งสามไฟล์แล้ว
+2. เปิด `Test your agent` และเริ่มบทสนทนาใหม่
+3. เลือกปุ่มแนบไฟล์ แล้วแนบไฟล์ต่อไปนี้พร้อมกัน
+   - `fictional-vendor-a-scanner-proposal.pdf`
+   - `fictional-vendor-b-scanner-proposal.pdf`
+   - `fictional-vendor-c-scanner-proposal.pdf`
+4. ตรวจว่าชื่อไฟล์ทั้งสามแสดงอยู่ในข้อความก่อนส่ง
+5. ใส่คำขอต่อไปนี้แล้วกดส่ง
 
    ```text
-   ช่วยแจ้งขั้นตอนขอสิทธิ์เข้าใช้ระบบ Customer Demo Portal ให้หน่อย
+   ช่วยเปรียบเทียบข้อเสนอ vendor ทั้ง 3 ไฟล์ โดยสรุปข้อดี ข้อควรระวัง
+   ข้อมูลที่ยังขาด และประเด็นที่ผู้มีอำนาจควรพิจารณาก่อนตัดสินใจ
    ```
 
-6. สังเกตว่า Agent อาจยังไม่มีข้อมูลขั้นตอนที่เชื่อถือได้ เพราะเรายังไม่ได้เพิ่ม Knowledge
-7. ส่งคำถามนอกขอบเขต
+6. ตรวจว่าคำตอบเปรียบเทียบครบทั้งราคา เงื่อนไขชำระเงิน การส่งมอบ การรับประกัน และบริการ
+7. ตรวจว่า Agent ระบุอย่างน้อยหนึ่งข้อมูลที่ควรถามเพิ่ม เช่น การติดตั้งของ Vendor B หรือพื้นที่บริการที่ต้องใช้จริง
+8. ถามต่อ
 
    ```text
-   ช่วยแนะนำร้านอาหารใกล้ออฟฟิศให้หน่อย
+   Vendor B ราคาต่ำที่สุด เลือกรายนี้ให้เลยได้ไหม
    ```
 
-8. ตรวจว่า Agent ชี้แจงขอบเขตและไม่สร้างคำตอบเกี่ยวกับงานที่ไม่เกี่ยวข้อง
+9. ตรวจว่า Agent ไม่อนุมัติหรือเลือก vendor และเสนอหัวข้อให้ผู้มีอำนาจพิจารณาแทน
+
+> **⚠️ Environment blocked:** หากไม่เห็นปุ่มแนบไฟล์หรือระบบไม่รับไฟล์ PDF ให้บันทึกข้อจำกัดที่พบและติดตาม Instructor demonstration ห้ามใช้ข้อมูลจริงหรือเพิ่มไฟล์เหล่านี้เป็น `Knowledge` เพราะการเพิ่ม Knowledge เป็นเป้าหมายของแบบฝึกหัดถัดไป
 
 #### Checkpoint
 
-- Agent ไม่แต่งขั้นตอนบริการที่ยังไม่มี Knowledge และจัดการคำถามนอกขอบเขตได้เหมาะสม
-
-#### Expected Output
-
-- Agent พร้อม Instructions และผล Smoke test อย่างน้อยสองกรณี
-
-## Optional Extension
-
-ปรับคำอธิบาย Agent และ Suggested prompts ให้เพื่อนร่วมชั้นเข้าใจขอบเขตได้ทันที โดยยังไม่เพิ่มความสามารถใหม่
+- Agent เปรียบเทียบข้อมูลได้ตรงกับ [ชุดข้อมูล vendor จำลอง](/files/vendor-comparison-sample.md) ระบุข้อมูลที่ขาด และคงการตัดสินใจไว้กับมนุษย์
 
 ## Summary
 
-เราเปลี่ยนงานน่าเบื่อให้เป็น Agent ที่มีขอบเขตชัดเจน ขั้นต่อไปคือเพิ่มคู่มือจำลองเป็น Knowledge เพื่อให้ Agent ตอบจากแหล่งข้อมูลที่ตรวจสอบได้
+เราได้สร้าง Agent จากภาษาธรรมชาติและใช้ Agent เปรียบเทียบไฟล์ข้อเสนอจำลองสามไฟล์ที่แนบมาในบทสนทนา Agent ช่วยจัดข้อเสนอให้เปรียบเทียบง่ายขึ้นเหมือนผู้ช่วยเตรียมแฟ้ม แต่ผู้มีอำนาจยังเป็นผู้ตัดสินใจ ขั้นต่อไปเราจะสร้าง Agent ที่ตอบจากชุดเอกสารนโยบายจำลอง
 
-[กลับหน้าหลัก](/) | [แบบฝึกหัดถัดไป เพิ่ม Knowledge](./exercise-02-add-knowledge)
+[กลับหน้าหลัก](/) | [แบบฝึกหัดถัดไป Loan Application Policy Assistant](./exercise-02-add-knowledge)
